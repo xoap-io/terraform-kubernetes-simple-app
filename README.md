@@ -134,7 +134,7 @@ No modules.
 | <a name="input_context"></a> [context](#input\_context) | Default environmental context | <pre>object({<br>    organization = string<br>    environment  = string<br>    account      = string<br>    product      = string<br>    tags         = map(string)<br>  })</pre> | n/a | yes |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain that should be configured to route traffic from. | `string` | n/a | yes |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Map with environment variables injected to the containers. | `map(any)` | n/a | yes |
-| <a name="input_health_check"></a> [health\_check](#input\_health\_check) | Health check configuration. | <pre>object({<br>    path                  = string<br>    initial_delay_seconds = number<br>    timeout_seconds       = number<br>    success_threshold     = number<br>    failure_threshold     = number<br>  })</pre> | n/a | yes |
+| <a name="input_health_check"></a> [health\_check](#input\_health\_check) | Health check configuration. | <pre>object({<br>    path                  = string<br>    initial_delay_seconds = number<br>    timeout_seconds       = number<br>    success_threshold     = number<br>    failure_threshold     = number<br>    period_seconds        = number<br>  })</pre> | n/a | yes |
 | <a name="input_image"></a> [image](#input\_image) | Image name and tag to deploy. | `string` | n/a | yes |
 | <a name="input_ingress_annotations"></a> [ingress\_annotations](#input\_ingress\_annotations) | Annotations to be added to the ingress resource. | `map(string)` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Name used to identify deployed container and all related resources. | `string` | n/a | yes |

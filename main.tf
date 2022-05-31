@@ -81,6 +81,16 @@ resource "kubernetes_deployment" "this" {
             timeout_seconds       = var.health_check.timeout_seconds
             success_threshold     = var.health_check.success_threshold
             failure_threshold     = var.health_check.failure_threshold
+            period_seconds        = var.health_check.period_seconds
+          }
+          startup_probe {
+            http_get {
+              path = var.health_check.path
+              port = var.container_port
+            }
+            failure_threshold = 12
+            success_threshold = 1
+            period_seconds    = 10
           }
           resources {
             limits   = var.resource_config.limits

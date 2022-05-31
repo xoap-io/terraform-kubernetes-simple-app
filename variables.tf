@@ -38,6 +38,7 @@ variable "health_check" {
     timeout_seconds       = number
     success_threshold     = number
     failure_threshold     = number
+    period_seconds        = number
   })
   description = "Health check configuration."
 }

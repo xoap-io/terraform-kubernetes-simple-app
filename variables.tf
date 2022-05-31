@@ -31,9 +31,15 @@ variable "ingress_annotations" {
   type        = map(string)
   description = "Annotations to be added to the ingress resource."
 }
-variable "health_check_path" {
-  type        = string
-  description = "Path to be used for health checks."
+variable "health_check" {
+  type = object({
+    path                  = string
+    initial_delay_seconds = number
+    timeout_seconds       = number
+    success_threshold     = number
+    failure_threshold     = number
+  })
+  description = "Health check configuration."
 }
 variable "environment_variables" {
   type        = map(any)

@@ -74,9 +74,13 @@ resource "kubernetes_deployment" "this" {
           }
           liveness_probe {
             http_get {
-              path = var.health_check_path
+              path = var.health_check.path
               port = var.container_port
             }
+            initial_delay_seconds = var.health_check.initial_delay_seconds
+            timeout_seconds       = var.health_check.timeout_seconds
+            success_threshold     = var.health_check.success_threshold
+            failure_threshold     = var.health_check.failure_threshold
           }
           resources {
             limits   = var.resource_config.limits

@@ -11,6 +11,7 @@ resource "kubernetes_service_account" "this" {
       k8s-app = var.name
     })
   }
+  annotations                     = var.service_account_annotations
   automount_service_account_token = true
 }
 resource "kubernetes_deployment" "this" {

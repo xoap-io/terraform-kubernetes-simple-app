@@ -31,6 +31,10 @@ variable "ingress_annotations" {
   type        = map(string)
   description = "Annotations to be added to the ingress resource."
 }
+variable "service_account_annotations" {
+  type        = map(string)
+  description = "Annotations to be added to the service account resource."
+}
 variable "health_check" {
   type = object({
     path                  = string

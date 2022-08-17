@@ -141,6 +141,7 @@ No modules.
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Kubernetes namespace where resources must be created. | `string` | n/a | yes |
 | <a name="input_paths"></a> [paths](#input\_paths) | Object mapping local paths to container paths | `map(any)` | `{}` | no |
 | <a name="input_resource_config"></a> [resource\_config](#input\_resource\_config) | Object with resource limits and requests. | <pre>object({<br>    limits = object({<br>      cpu    = string<br>      memory = string<br>    })<br><br>    requests = object({<br>      cpu    = string<br>      memory = string<br>    })<br>  })</pre> | <pre>{<br>  "limits": {<br>    "cpu": "0.5",<br>    "memory": "512Mi"<br>  },<br>  "requests": {<br>    "cpu": "250m",<br>    "memory": "50Mi"<br>  }<br>}</pre> | no |
+| <a name="input_service_account_annotations"></a> [service\_account\_annotations](#input\_service\_account\_annotations) | Annotations to be added to the service account resource. | `map(string)` | n/a | yes |
 | <a name="input_service_port"></a> [service\_port](#input\_service\_port) | Port configured on the service side to receive requests (routed to the container port). | `string` | n/a | yes |
 
 ## Outputs

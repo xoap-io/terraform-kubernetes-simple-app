@@ -122,7 +122,9 @@ No modules.
 | Name | Type |
 |------|------|
 | [kubernetes_deployment.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment) | resource |
+| [kubernetes_horizontal_pod_autoscaler.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/horizontal_pod_autoscaler) | resource |
 | [kubernetes_ingress_v1.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/ingress_v1) | resource |
+| [kubernetes_pod_disruption_budget.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/pod_disruption_budget) | resource |
 | [kubernetes_service.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service) | resource |
 | [kubernetes_service_account.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_account) | resource |
 
@@ -135,8 +137,10 @@ No modules.
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain that should be configured to route traffic from. | `string` | n/a | yes |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Map with environment variables injected to the containers. | `map(any)` | n/a | yes |
 | <a name="input_health_check"></a> [health\_check](#input\_health\_check) | Health check configuration. | <pre>object({<br>    path                  = string<br>    initial_delay_seconds = number<br>    timeout_seconds       = number<br>    success_threshold     = number<br>    failure_threshold     = number<br>    period_seconds        = number<br>  })</pre> | n/a | yes |
+| <a name="input_hpa"></a> [hpa](#input\_hpa) | Object with autoscaler limits and requests. | <pre>object({<br>    max_replicas                      = number<br>    min_replicas                      = number<br>    target_cpu_utilization_percentage = number<br>  })</pre> | n/a | yes |
 | <a name="input_image"></a> [image](#input\_image) | Image name and tag to deploy. | `string` | n/a | yes |
 | <a name="input_ingress_annotations"></a> [ingress\_annotations](#input\_ingress\_annotations) | Annotations to be added to the ingress resource. | `map(string)` | n/a | yes |
+| <a name="input_ingress_class"></a> [ingress\_class](#input\_ingress\_class) | Class name for ingress. defaults to kong | `string` | `"kong"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name used to identify deployed container and all related resources. | `string` | n/a | yes |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Kubernetes namespace where resources must be created. | `string` | n/a | yes |
 | <a name="input_paths"></a> [paths](#input\_paths) | Object mapping local paths to container paths | `map(any)` | `{}` | no |

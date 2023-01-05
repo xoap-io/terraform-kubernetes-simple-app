@@ -6,6 +6,11 @@ variable "image" {
   type        = string
   description = "Image name and tag to deploy."
 }
+variable "ingress_class" {
+  type        = string
+  description = "Class name for ingress. defaults to kong"
+  default     = "kong"
+}
 variable "paths" {
   type        = map(any)
   description = "Object mapping local paths to container paths"
@@ -73,6 +78,15 @@ variable "resource_config" {
     }
   }
   description = "Object with resource limits and requests."
+}
+variable "hpa" {
+  type = object({
+    max_replicas                      = number
+    min_replicas                      = number
+    target_cpu_utilization_percentage = number
+  })
+  description = "Object with autoscaler limits and requests."
+
 }
 variable "context" {
   type = object({

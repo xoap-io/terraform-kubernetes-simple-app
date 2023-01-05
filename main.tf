@@ -44,7 +44,7 @@ resource "kubernetes_deployment" "this" {
         }
       }
       spec {
-        service_account_name = join("", kubernetes_service_account.this.metadata.*.name)
+        service_account_name = join("", kubernetes_service_account.this.metadata[*].name)
         dynamic "volume" {
           for_each = var.paths
           content {
@@ -110,6 +110,11 @@ resource "kubernetes_deployment" "this" {
 
     }
   }
+  lifecycle {
+    ignore_changes = [
+      spec[0].replicas,
+    ]
+  }
 }
 resource "kubernetes_service" "this" {
   metadata {
@@ -139,10 +144,7 @@ resource "kubernetes_ingress_v1" "this" {
     labels      = local.labels
   }
   spec {
-    tls {
-      hosts       = [var.domain]
-      secret_name = "cert-${var.name}"
-    }
+    ingress_class_name = var.ingress_class
     rule {
       host = var.domain
       http {
@@ -151,13 +153,47 @@ resource "kubernetes_ingress_v1" "this" {
 
           backend {
             service {
-              name = kubernetes_service.this.metadata.0.name
+              name = kubernetes_service.this.metadata[0].name
               port {
                 number = var.container_port
               }
             }
           }
         }
+      }
+    }
+  }
+}
+resource "kubernetes_horizontal_pod_autoscaler" "this" {
+  metadata {
+    name      = "hpa-${var.name}"
+    namespace = var.namespace
+    labels    = local.labels
+  }
+
+  spec {
+    max_replicas                      = var.hpa.max_replicas
+    min_replicas                      = var.hpa.min_replicas
+    target_cpu_utilization_percentage = var.hpa.target_cpu_utilization_percentage
+    scale_target_ref {
+      api_version = "apps/v1"
+      kind        = "Deployment"
+      name        = kubernetes_deployment.this.metadata[0].name
+    }
+  }
+}
+resource "kubernetes_pod_disruption_budget" "this" {
+  metadata {
+    name      = "pdb-${var.name}"
+    namespace = var.namespace
+    labels    = local.labels
+  }
+  spec {
+    max_unavailable = "20%"
+    min_available   = "50%"
+    selector {
+      match_labels = {
+        k8s-app = kubernetes_deployment.this.metadata[0].labels.k8s-app
       }
     }
   }

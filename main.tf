@@ -113,6 +113,10 @@ resource "kubernetes_deployment" "this" {
   lifecycle {
     ignore_changes = [
       spec[0].replicas,
+      metadata[0].annotations["field.cattle.io/publicEndpoints"],
+      metadata[0].annotations["cattle.io/status"],
+      metadata[0].annotations["lifecycle.cattle.io/create.namespace-auth"]
+
     ]
   }
 }
@@ -163,6 +167,13 @@ resource "kubernetes_ingress_v1" "this" {
       }
     }
   }
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations["field.cattle.io/publicEndpoints"],
+      metadata[0].annotations["cattle.io/status"],
+      metadata[0].annotations["lifecycle.cattle.io/create.namespace-auth"],
+    ]
+  }
 }
 resource "kubernetes_horizontal_pod_autoscaler" "this" {
   metadata {
@@ -180,6 +191,7 @@ resource "kubernetes_horizontal_pod_autoscaler" "this" {
       kind        = "Deployment"
       name        = kubernetes_deployment.this.metadata[0].name
     }
+
   }
 }
 resource "kubernetes_pod_disruption_budget" "this" {
@@ -189,8 +201,7 @@ resource "kubernetes_pod_disruption_budget" "this" {
     labels    = local.labels
   }
   spec {
-    max_unavailable = "20%"
-    min_available   = "50%"
+    min_available = "50%"
     selector {
       match_labels = {
         k8s-app = kubernetes_deployment.this.metadata[0].labels.k8s-app

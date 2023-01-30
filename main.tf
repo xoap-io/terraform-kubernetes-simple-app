@@ -69,30 +69,45 @@ resource "kubernetes_deployment" "this" {
               value = env.value
             }
           }
-          port {
-            container_port = var.container_port
-            name           = "http"
-            protocol       = "TCP"
-          }
-          liveness_probe {
-            http_get {
-              path = var.health_check.path
-              port = var.container_port
+          dynamic "port" {
+            for_each = var.service != null ? toset(["1"]) : toset([])
+            content {
+              container_port = var.service.container_port
+              name           = var.service.https_enabled ? "https" : "http"
+              protocol       = "TCP"
+
             }
-            initial_delay_seconds = var.health_check.initial_delay_seconds
-            timeout_seconds       = var.health_check.timeout_seconds
-            success_threshold     = var.health_check.success_threshold
-            failure_threshold     = var.health_check.failure_threshold
-            period_seconds        = var.health_check.period_seconds
           }
-          startup_probe {
-            http_get {
-              path = var.health_check.path
-              port = var.container_port
+          dynamic "liveness_probe" {
+            for_each = var.service != null ? toset(["1"]) : toset([])
+            content {
+              http_get {
+                path   = var.service.healthcheck.path
+                port   = var.service.container_port
+                scheme = var.service.https_enabled ? "HTTPS" : "HTTP"
+              }
+              initial_delay_seconds = var.service.healthcheck.initial_delay_seconds
+              timeout_seconds       = var.service.healthcheck.timeout_seconds
+              success_threshold     = var.service.healthcheck.success_threshold
+              failure_threshold     = var.service.healthcheck.failure_threshold
+              period_seconds        = var.service.healthcheck.period_seconds
             }
-            failure_threshold = 12
-            success_threshold = 1
-            period_seconds    = 10
+
+          }
+          dynamic "readiness_probe" {
+            for_each = var.service != null ? toset(["1"]) : toset([])
+            content {
+              http_get {
+                path   = var.service.healthcheck.path
+                port   = var.service.container_port
+                scheme = var.service.https_enabled ? "HTTPS" : "HTTP"
+              }
+              failure_threshold = 12
+              success_threshold = 1
+              period_seconds    = 10
+
+            }
+
           }
           resources {
             limits   = var.resource_config.limits
@@ -120,46 +135,50 @@ resource "kubernetes_deployment" "this" {
     ]
   }
 }
+
 resource "kubernetes_service" "this" {
+  count = var.service != null ? 1 : 0
   metadata {
-    name      = var.name
-    namespace = var.namespace
-    labels    = local.labels
+    name        = var.name
+    namespace   = var.namespace
+    labels      = local.labels
+    annotations = var.service.annotations
   }
   spec {
     selector = {
       k8s-app = kubernetes_deployment.this.metadata[0].labels.k8s-app
     }
     port {
-      name        = "http"
-      port        = var.service_port
-      target_port = "http"
+      name        = var.service.https_enabled ? "https" : "http"
+      port        = var.service.target_port
+      target_port = var.service.https_enabled ? "https" : "http"
     }
 
-    type = "ClusterIP"
+    type = var.service.type
   }
 }
 resource "kubernetes_ingress_v1" "this" {
+  count                  = var.ingress != null ? 1 : 0
   wait_for_load_balancer = true
   metadata {
     name        = var.name
     namespace   = var.namespace
-    annotations = var.ingress_annotations
+    annotations = var.ingress.annotations
     labels      = local.labels
   }
   spec {
-    ingress_class_name = var.ingress_class
+    ingress_class_name = var.ingress.ingress_class
     rule {
-      host = var.domain
+      host = var.ingress.host
       http {
         path {
           path = "/"
 
           backend {
             service {
-              name = kubernetes_service.this.metadata[0].name
+              name = kubernetes_service.this[0].metadata[0].name
               port {
-                number = var.container_port
+                number = var.service.target_port
               }
             }
           }

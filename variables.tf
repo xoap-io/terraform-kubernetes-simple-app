@@ -6,51 +6,47 @@ variable "image" {
   type        = string
   description = "Image name and tag to deploy."
 }
-variable "ingress_class" {
-  type        = string
-  description = "Class name for ingress. defaults to kong"
-  default     = "kong"
-}
 variable "paths" {
   type        = map(any)
   description = "Object mapping local paths to container paths"
   default     = {}
 }
-variable "domain" {
-  type        = string
-  description = "Domain that should be configured to route traffic from."
-}
 variable "namespace" {
   type        = string
   description = "Kubernetes namespace where resources must be created."
 }
-variable "container_port" {
-  type        = string
-  description = "Container port where to send to requests to."
+variable "ingress" {
+  type = object({
+    host          = string
+    ingress_class = optional(string, "kong")
+    annotations   = optional(map(string), {})
+
+  })
+  default = null
 }
-variable "service_port" {
-  type        = string
-  description = "Port configured on the service side to receive requests (routed to the container port)."
-}
-variable "ingress_annotations" {
-  type        = map(string)
-  description = "Annotations to be added to the ingress resource."
+variable "service" {
+  type = object({
+    container_port = number
+    target_port    = number
+    type           = string
+    https_enabled  = bool
+    annotations    = optional(map(string), {})
+    healthcheck = object({
+      path                  = string
+      initial_delay_seconds = number
+      timeout_seconds       = number
+      success_threshold     = number
+      failure_threshold     = number
+      period_seconds        = number
+    })
+  })
+  default = null
 }
 variable "service_account_annotations" {
   type        = map(string)
   description = "Annotations to be added to the service account resource."
 }
-variable "health_check" {
-  type = object({
-    path                  = string
-    initial_delay_seconds = number
-    timeout_seconds       = number
-    success_threshold     = number
-    failure_threshold     = number
-    period_seconds        = number
-  })
-  description = "Health check configuration."
-}
+
 variable "environment_variables" {
   type        = map(any)
   description = "Map with environment variables injected to the containers."

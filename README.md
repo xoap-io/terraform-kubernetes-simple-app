@@ -132,21 +132,17 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_container_port"></a> [container\_port](#input\_container\_port) | Container port where to send to requests to. | `string` | n/a | yes |
 | <a name="input_context"></a> [context](#input\_context) | Default environmental context | <pre>object({<br>    organization = string<br>    environment  = string<br>    account      = string<br>    product      = string<br>    tags         = map(string)<br>  })</pre> | n/a | yes |
-| <a name="input_domain"></a> [domain](#input\_domain) | Domain that should be configured to route traffic from. | `string` | n/a | yes |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Map with environment variables injected to the containers. | `map(any)` | n/a | yes |
-| <a name="input_health_check"></a> [health\_check](#input\_health\_check) | Health check configuration. | <pre>object({<br>    path                  = string<br>    initial_delay_seconds = number<br>    timeout_seconds       = number<br>    success_threshold     = number<br>    failure_threshold     = number<br>    period_seconds        = number<br>  })</pre> | n/a | yes |
 | <a name="input_hpa"></a> [hpa](#input\_hpa) | Object with autoscaler limits and requests. | <pre>object({<br>    max_replicas                      = number<br>    min_replicas                      = number<br>    target_cpu_utilization_percentage = number<br>  })</pre> | n/a | yes |
 | <a name="input_image"></a> [image](#input\_image) | Image name and tag to deploy. | `string` | n/a | yes |
-| <a name="input_ingress_annotations"></a> [ingress\_annotations](#input\_ingress\_annotations) | Annotations to be added to the ingress resource. | `map(string)` | n/a | yes |
-| <a name="input_ingress_class"></a> [ingress\_class](#input\_ingress\_class) | Class name for ingress. defaults to kong | `string` | `"kong"` | no |
+| <a name="input_ingress"></a> [ingress](#input\_ingress) | n/a | <pre>object({<br>    host          = string<br>    ingress_class = optional(string, "kong")<br>    annotations   = optional(map(string), {})<br><br>  })</pre> | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name used to identify deployed container and all related resources. | `string` | n/a | yes |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Kubernetes namespace where resources must be created. | `string` | n/a | yes |
 | <a name="input_paths"></a> [paths](#input\_paths) | Object mapping local paths to container paths | `map(any)` | `{}` | no |
 | <a name="input_resource_config"></a> [resource\_config](#input\_resource\_config) | Object with resource limits and requests. | <pre>object({<br>    limits = object({<br>      cpu    = string<br>      memory = string<br>    })<br><br>    requests = object({<br>      cpu    = string<br>      memory = string<br>    })<br>  })</pre> | <pre>{<br>  "limits": {<br>    "cpu": "0.5",<br>    "memory": "512Mi"<br>  },<br>  "requests": {<br>    "cpu": "250m",<br>    "memory": "50Mi"<br>  }<br>}</pre> | no |
+| <a name="input_service"></a> [service](#input\_service) | n/a | <pre>object({<br>    container_port = number<br>    target_port    = number<br>    type           = string<br>    https_enabled  = bool<br>    annotations    = optional(map(string), {})<br>    healthcheck = object({<br>      path                  = string<br>      initial_delay_seconds = number<br>      timeout_seconds       = number<br>      success_threshold     = number<br>      failure_threshold     = number<br>      period_seconds        = number<br>    })<br>  })</pre> | `null` | no |
 | <a name="input_service_account_annotations"></a> [service\_account\_annotations](#input\_service\_account\_annotations) | Annotations to be added to the service account resource. | `map(string)` | n/a | yes |
-| <a name="input_service_port"></a> [service\_port](#input\_service\_port) | Port configured on the service side to receive requests (routed to the container port). | `string` | n/a | yes |
 
 ## Outputs
 

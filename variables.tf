@@ -11,6 +11,12 @@ variable "paths" {
   description = "Object mapping local paths to container paths"
   default     = {}
 }
+
+variable "additional_hosts" {
+  type        = map(string)
+  description = "Map of additional hosts to be added to the ingress."
+  default     = {}
+}
 variable "namespace" {
   type        = string
   description = "Kubernetes namespace where resources must be created."

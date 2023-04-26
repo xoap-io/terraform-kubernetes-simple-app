@@ -185,6 +185,26 @@ resource "kubernetes_ingress_v1" "this" {
         }
       }
     }
+    dynamic "rule" {
+      for_each = var.additional_hosts
+      content {
+        host = rule.key
+        http {
+          path {
+            path = rule.value
+
+            backend {
+              service {
+                name = kubernetes_service.this[0].metadata[0].name
+                port {
+                  number = var.service.target_port
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
   lifecycle {
     ignore_changes = [
